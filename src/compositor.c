@@ -67,6 +67,7 @@
 #include "version.h"
 
 #define DEFAULT_REPAINT_WINDOW 7 /* milliseconds */
+#include "postcompositor-rift.h"
 
 #define NSEC_PER_SEC 1000000000
 
@@ -5053,6 +5054,7 @@ usage(int error_code)
 		"  --log=FILE\t\tLog to the given file\n"
 		"  -c, --config=FILE\tConfig file to load, defaults to weston.ini\n"
 		"  --no-config\t\tDo not read weston.ini\n"
+		"  -R, --rift\t\tOculus Rift post-compositor\n"
 		"  -h, --help\t\tThis help message\n\n");
 
 #if defined(BUILD_DRM_COMPOSITOR)
@@ -5292,6 +5294,9 @@ int main(int argc, char *argv[])
 	char *socket_name = NULL;
 	int32_t version = 0;
 	int32_t noconfig = 0;
+	int32_t rift = 0;
+	int32_t riftsbs = 0; // should be on a hotkey, but have hacky support now
+	int32_t riftrotate = 0; // should be in config section
 	int32_t numlock_on;
 	char *config_file = NULL;
 	struct weston_config *config;
@@ -5311,6 +5316,9 @@ int main(int argc, char *argv[])
 		{ WESTON_OPTION_BOOLEAN, "version", 0, &version },
 		{ WESTON_OPTION_BOOLEAN, "no-config", 0, &noconfig },
 		{ WESTON_OPTION_STRING, "config", 'c', &config_file },
+		{ WESTON_OPTION_BOOLEAN, "rift", 'R', &rift },
+		{ WESTON_OPTION_BOOLEAN, "rift-sbs", 0, &riftsbs }, // temporary
+		{ WESTON_OPTION_BOOLEAN, "rift-rotate", 0, &riftrotate }, // temporary
 	};
 
 	parse_options(core_options, ARRAY_LENGTH(core_options), &argc, argv);
@@ -5373,6 +5381,16 @@ int main(int argc, char *argv[])
 		weston_log("fatal: failed to create compositor\n");
 		goto out_signals;
 	}
+
+	if (rift != 0)
+  {
+		weston_log("Running Oculus Rift version\n");
+    setup_rift(ec);
+    if(riftsbs !=0)
+      ec->rift->sbs = 1;
+    if(riftrotate != 0)
+      ec->rift->rotate = 1;
+  }
 
 	catch_signals();
 	segv_compositor = ec;
