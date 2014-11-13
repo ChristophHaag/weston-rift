@@ -4757,6 +4757,8 @@ weston_load_module(const char *name, const char *entrypoint)
 }
 
 		"  -R, --rift\t\tOculus Rift post-compositor\n"
+		"  --card=PATH\tPath of graphics card to run on (e.g. /dev/dri/card0)\n"
+		"  --use-gl-cursors\t\tUse GL cursors\n"
 
 /** Destroys the compositor.
  *

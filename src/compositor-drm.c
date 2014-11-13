@@ -130,6 +130,8 @@ struct drm_backend {
 
 	int32_t cursor_width;
 	int32_t cursor_height;
+
+	const char *graphics_card;
 };
 
 struct drm_mode {
@@ -224,12 +226,15 @@ struct drm_parameters {
 	int connector;
 	int tty;
 	int use_pixman;
+	int use_gl_cursors;
 	const char *seat_id;
+	const char *graphics_card;
 };
 
 static struct gl_renderer_interface *gl_renderer;
 
 static const char default_seat[] = "seat0";
+static const char *default_card = NULL;
 
 static void
 drm_output_set_cursor(struct drm_output *output);
@@ -1466,7 +1471,9 @@ init_drm(struct drm_backend *b, struct udev_device *device)
 	}
 
 	filename = udev_device_get_devnode(device);
-	fd = weston_launcher_open(b->compositor->launcher, filename, O_RDWR);
+	if(ec->graphics_card != NULL)
+    filename = ec->graphics_card;
+	fd = weston_launcher_open(ec->base.launcher, filename, O_RDWR);
 	if (fd < 0) {
 		/* Probably permissions error */
 		weston_log("couldn't open %s, skipping\n",
@@ -3099,7 +3106,10 @@ drm_backend_create(struct weston_compositor *compositor,
 	b->session_listener.notify = session_notify;
 	wl_signal_add(&compositor->session_signal, &b->session_listener);
 
-	drm_device = find_primary_gpu(b, param->seat_id);
+	// overrides the primary gpu
+	ec->graphics_card = param->graphics_card;
+
+	drm_device = find_primary_gpu(ec, param->seat_id);
 	if (drm_device == NULL) {
 		weston_log("no drm device found\n");
 		goto err_udev;
@@ -3147,6 +3157,10 @@ drm_backend_create(struct weston_compositor *compositor,
 		goto err_udev_input;
 	}
 
+  if(param->use_gl_cursors == 1)
+  {
+    ec->cursors_are_broken = 1;
+  }
 	/* A this point we have some idea of whether or not we have a working
 	 * cursor plane. */
 	if (!b->cursors_are_broken)
@@ -3232,12 +3246,15 @@ backend_init(struct weston_compositor *compositor, int *argc, char *argv[],
 	const struct weston_option drm_options[] = {
 		{ WESTON_OPTION_INTEGER, "connector", 0, &param.connector },
 		{ WESTON_OPTION_STRING, "seat", 0, &param.seat_id },
+		{ WESTON_OPTION_STRING, "card", 0, &param.graphics_card },
 		{ WESTON_OPTION_INTEGER, "tty", 0, &param.tty },
 		{ WESTON_OPTION_BOOLEAN, "current-mode", 0, &option_current_mode },
 		{ WESTON_OPTION_BOOLEAN, "use-pixman", 0, &param.use_pixman },
+		{ WESTON_OPTION_BOOLEAN, "use-gl-cursors", 0, &param.use_gl_cursors },
 	};
 
 	param.seat_id = default_seat;
+  param.graphics_card = default_card;
 
 	parse_options(drm_options, ARRAY_LENGTH(drm_options), argc, argv);
 
