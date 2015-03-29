@@ -39,7 +39,7 @@ tests/weston-ivi.ini : $(srcdir)/ivi-shell/weston.ini.in
 
 all-local : weston.ini ivi-shell/weston.ini
 
-AM_CFLAGS = $(GCC_CFLAGS)
+AM_CFLAGS = $(GCC_CFLAGS) $(OVR_CFLAGS)
 
 AM_CPPFLAGS = 					\
 	-I$(top_srcdir)/src			\
@@ -51,7 +51,8 @@ AM_CPPFLAGS = 					\
 	-DDATADIR='"$(datadir)"'		\
 	-DMODULEDIR='"$(moduledir)"'		\
 	-DLIBEXECDIR='"$(libexecdir)"'		\
-	-DBINDIR='"$(bindir)"'
+	-DBINDIR='"$(bindir)"'			\
+	$(OVR_CFLAGS)
 
 CLEANFILES = weston.ini				\
 	ivi-shell/weston.ini			\
@@ -65,7 +66,7 @@ weston_LDFLAGS = -export-dynamic
 weston_CPPFLAGS = $(AM_CPPFLAGS) -DIN_WESTON
 weston_CFLAGS = $(GCC_CFLAGS) $(COMPOSITOR_CFLAGS) $(LIBUNWIND_CFLAGS)
 weston_LDADD = $(COMPOSITOR_LIBS) $(LIBUNWIND_LIBS) \
-	$(DLOPEN_LIBS) $(EGL_LIBS) -lm libshared.la -lOculusVR -lGL
+	$(DLOPEN_LIBS) $(EGL_LIBS) $(OVR_LIBS) -lm libshared.la -lGL
 
 weston_SOURCES =					\
 	src/git-version.h				\
@@ -807,7 +808,8 @@ desktop_shell_la_CPPFLAGS =			\
 	-DDATADIR='"$(datadir)"'		\
 	-DMODULEDIR='"$(moduledir)"'		\
 	-DLIBEXECDIR='"$(libexecdir)"'		\
-	-DIN_WESTON
+	-DIN_WESTON				\
+	$(OVR_CFLAGS)
 
 desktop_shell_la_LDFLAGS = -module -avoid-version
 desktop_shell_la_LIBADD = $(COMPOSITOR_LIBS) libshared.la
@@ -836,7 +838,8 @@ fullscreen_shell_la_CPPFLAGS =			\
 	-I$(top_srcdir)/shared			\
 	-I$(top_srcdir)/src			\
 	-I$(top_builddir)/src			\
-	-DIN_WESTON
+	-DIN_WESTON				\
+	$(OVR_CFLAGS)
 
 fullscreen_shell_la_LDFLAGS = -module -avoid-version
 fullscreen_shell_la_LIBADD = $(COMPOSITOR_LIBS)
@@ -929,7 +932,8 @@ xwayland_la_CPPFLAGS =				\
 	-DDATADIR='"$(datadir)"'		\
 	-DMODULEDIR='"$(moduledir)"'		\
 	-DLIBEXECDIR='"$(libexecdir)"'		\
-	-DXSERVER_PATH='"@XSERVER_PATH@"'
+	-DXSERVER_PATH='"@XSERVER_PATH@"'	\
+	$(OVR_CFLAGS)
 
 xwayland_la_LDFLAGS = -module -avoid-version
 xwayland_la_LIBADD =			\
