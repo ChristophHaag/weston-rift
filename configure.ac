@@ -494,6 +494,13 @@ if test x$enable_wcap_tools = xyes; then
   WCAP_LIBS="$WCAP_LIBS -lm"
 fi
 
+PKG_CHECK_MODULES(OVR, [libovr], [HAVE_OVR=1], [HAVE_OVR=0]) #TODO
+#Simply error out at compile time if files are not found at these paths
+if test "x$HAVE_OVR" = "x0"; then
+OVR_CFLAGS="-I/usr/include/ovr-0.5.0.1/LibOVR -I/usr/include/ovr-0.5.0.1/LibOVR/Include -I/usr/include/ovr-0.5.0.1/LibOVR/Src -I/usr/include/ovr-0.5.0.1/LibOVRKernel -I/usr/include/ovr-0.5.0.1/LibOVRKernel/Src"
+OVR_LIBS="-lOVR -lXrandr -ludev"
+fi
+
 PKG_CHECK_MODULES(SETBACKLIGHT, [libudev libdrm], enable_setbacklight=yes, enable_setbacklight=no)
 AM_CONDITIONAL(BUILD_SETBACKLIGHT, test "x$enable_setbacklight" = "xyes")
 
