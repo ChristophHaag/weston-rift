@@ -741,6 +741,7 @@ int main(int argc, char *argv[])
 		goto out_signals;
 	}
 
+	config_rift(ec);
         if (rift != 0)
   {
 		weston_log("Running Oculus Rift version\n");

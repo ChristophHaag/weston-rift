@@ -607,7 +607,8 @@ setup_rift(struct weston_compositor *compositor)
       case GL_FRAMEBUFFER_UNSUPPORTED: weston_log("unsupported\n"); break;
     }
 
-    weston_log("framebuffer not working\n");
+    weston_log("framebuffer not working 1, %d %p\n", glCheckFramebufferStatus(GL_FRAMEBUFFER), rift);
+
     show_error();
     exit(1);
   }
@@ -693,7 +694,7 @@ setup_rift(struct weston_compositor *compositor)
         case GL_FRAMEBUFFER_UNSUPPORTED: weston_log("unsupported\n"); break;
       }
 
-      weston_log("framebuffer not working\n");
+      weston_log("framebuffer not working 2\n");
       show_error();
       exit(1);
     }
