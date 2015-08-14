@@ -4756,10 +4756,6 @@ weston_load_module(const char *name, const char *entrypoint)
 	return init;
 }
 
-		"  -R, --rift\t\tOculus Rift post-compositor\n"
-		"  --card=PATH\tPath of graphics card to run on (e.g. /dev/dri/card0)\n"
-		"  --use-gl-cursors\t\tUse GL cursors\n"
-
 /** Destroys the compositor.
  *
  * This function cleans up the compositor state and destroys it.
@@ -4792,22 +4788,6 @@ WL_EXPORT void
 weston_compositor_exit(struct weston_compositor *compositor)
 {
 	compositor->exit(compositor);
-	int32_t rift = 0;
-	int32_t riftsbs = 0; // should be on a hotkey, but have hacky support now
-	int32_t riftrotate = 0; // should be in config section
-		{ WESTON_OPTION_BOOLEAN, "rift", 'R', &rift },
-		{ WESTON_OPTION_BOOLEAN, "rift-sbs", 0, &riftsbs }, // temporary
-		{ WESTON_OPTION_BOOLEAN, "rift-rotate", 0, &riftrotate }, // temporary
-
-	if (rift != 0)
-  {
-		weston_log("Running Oculus Rift version\n");
-    setup_rift(ec);
-    if(riftsbs !=0)
-      ec->rift->sbs = 1;
-    if(riftrotate != 0)
-      ec->rift->rotate = 1;
-  }
 }
 
 /** Return the user data stored in the compositor.

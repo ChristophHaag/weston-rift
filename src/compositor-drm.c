@@ -1471,9 +1471,9 @@ init_drm(struct drm_backend *b, struct udev_device *device)
 	}
 
 	filename = udev_device_get_devnode(device);
-	if(ec->graphics_card != NULL)
-    filename = ec->graphics_card;
-	fd = weston_launcher_open(ec->base.launcher, filename, O_RDWR);
+	if(b->graphics_card != NULL)
+    filename = b->graphics_card;
+	fd = weston_launcher_open(b->compositor->launcher, filename, O_RDWR);
 	if (fd < 0) {
 		/* Probably permissions error */
 		weston_log("couldn't open %s, skipping\n",
@@ -3107,9 +3107,9 @@ drm_backend_create(struct weston_compositor *compositor,
 	wl_signal_add(&compositor->session_signal, &b->session_listener);
 
 	// overrides the primary gpu
-	ec->graphics_card = param->graphics_card;
+	b->graphics_card = param->graphics_card;
 
-	drm_device = find_primary_gpu(ec, param->seat_id);
+	drm_device = find_primary_gpu(b, param->seat_id);
 	if (drm_device == NULL) {
 		weston_log("no drm device found\n");
 		goto err_udev;
@@ -3159,7 +3159,7 @@ drm_backend_create(struct weston_compositor *compositor,
 
   if(param->use_gl_cursors == 1)
   {
-    ec->cursors_are_broken = 1;
+    b->cursors_are_broken = 1;
   }
 	/* A this point we have some idea of whether or not we have a working
 	 * cursor plane. */
