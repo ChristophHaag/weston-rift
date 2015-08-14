@@ -65,13 +65,15 @@ weston_LDFLAGS = -export-dynamic
 weston_CPPFLAGS = $(AM_CPPFLAGS) -DIN_WESTON
 weston_CFLAGS = $(AM_CFLAGS) $(COMPOSITOR_CFLAGS) $(LIBUNWIND_CFLAGS)
 weston_LDADD = $(COMPOSITOR_LIBS) $(LIBUNWIND_LIBS) \
-	$(DLOPEN_LIBS) -lm libshared.la
+	$(DLOPEN_LIBS) $(EGL_LIBS) -lm libshared.la -lOculusVR -lGL
 
 weston_SOURCES =					\
 	src/git-version.h				\
 	src/log.c					\
 	src/compositor.c				\
 	src/compositor.h				\
+	src/postcompositor-rift.c				\
+	src/postcompositor-rift.h				\
 	src/input.c					\
 	src/data-device.c				\
 	src/screenshooter.c				\
@@ -210,6 +212,8 @@ gl_renderer_la_CFLAGS =				\
 gl_renderer_la_SOURCES =			\
 	src/gl-renderer.h			\
 	src/gl-renderer.c			\
+	src/postcompositor-rift.h			\
+	src/postcompositor-rift.c			\
 	src/vertex-clipping.c			\
 	src/vertex-clipping.h			\
 	shared/helpers.h

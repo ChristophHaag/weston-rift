@@ -45,6 +45,8 @@ extern "C" {
 #include "zalloc.h"
 #include "timeline-object.h"
 
+#include "rift.h"
+
 struct weston_transform {
 	struct weston_matrix matrix;
 	struct wl_list link;
@@ -697,6 +699,8 @@ struct weston_compositor {
 	clockid_t presentation_clock;
 	int32_t repaint_msec;
 
+
+  struct oculus_rift *rift;
 	int exit_code;
 
 	void *user_data;
